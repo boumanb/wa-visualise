@@ -56,17 +56,18 @@ def plot_save_most_common(counter_data, title, most_common_size, output_dir):
 
 @click.command()
 @click.argument('chat_file', type=click.Path(exists=True))
-@click.argument('stopwords_file', type=click.Path(exists=True))
+@click.option('--stop_words', type=click.Path(exists=True), help='Use this to set the stop words file.')
 @click.option('--output_dir', help='Use this to set a certain output folder for the charts. Default=output.', default='output')
 @click.option('--from_date', help='Use this to visualise from certain date. [dd/mm/yy]')
 @click.option('--most_common_size', type=int, help='Set the output size of the most common charts. Default=50.')
 @click.option('--keep-emojis', is_flag=True, help='Setting this will keep emojis in output.')
-def main(chat_file, stopwords_file, from_date, most_common_size, keep_emojis, output_dir):
+def main(chat_file, stop_words, from_date, most_common_size, keep_emojis, output_dir):
     if not most_common_size:
         most_common_size = 50
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
-    stop_words = load_txt_file(stopwords_file)
+    if stop_words:
+        stop_words = load_txt_file(stop_words)
     chat_contents = load_txt_file(chat_file)
     chat = Chat(chat_contents, stop_words, from_date=from_date, keep_emojis=keep_emojis)
 

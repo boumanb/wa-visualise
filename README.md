@@ -22,7 +22,7 @@ Chat file has to be the original exported WhatsApp chat.
 File containing the stop words has to be a ordinary .txt file with the stop words seperated by new lines
 
 ```bash
-Usage: wa-visualise.py [OPTIONS] CHAT_FILE STOPWORDS_FILE
+Usage: wa-visualise.py [OPTIONS] CHAT_FILE
 
 Options:
   --output_dir TEXT           Use this to set a certain output folder for the

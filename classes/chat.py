@@ -39,7 +39,7 @@ class Chat:
     message_frequency_info = {}
     participants = []
 
-    def __init__(self, messages, stop_words, from_date=False, keep_emojis=False):
+    def __init__(self, messages, stop_words=False, from_date=False, keep_emojis=False):
         self.messages = process_chat(messages, from_date, keep_emojis)
         self.stop_words = stop_words
         self.load_participants()
@@ -59,7 +59,9 @@ class Chat:
                         message.send_by == name]
             for message in messages:
                 for word in message.split(' '):
-                    if word and word not in self.stop_words:
+                    if word and self.stop_words and word not in self.stop_words:
+                        word_count += 1
+                    elif word and not self.stop_words:
                         word_count += 1
             self.word_amount_info[name] = word_count
 
@@ -80,7 +82,9 @@ class Chat:
             messages = [message.message for message in self.messages if message.send_by == participant]
             for sentence in messages:
                 for word in sentence.split(' '):
-                    if word not in self.stop_words and word is not '':
+                    if word and self.stop_words and word not in self.stop_words:
+                        words.append(word)
+                    elif word and not self.stop_words:
                         words.append(word)
             most_common_words_per_participant[participant] = words
 
@@ -93,10 +97,18 @@ class Chat:
     def get_most_common_messages_per_participant(self, most_common_messages_size=MOST_COMMON_SIZE):
         most_common_messages_per_participant = {}
         for participant in self.participants:
-            most_common_messages_per_participant[participant] = Counter([message.message for message in self.messages
-                                                                         if message.send_by == participant
-                                                                         and message.message not in self.stop_words
-                                                                         and message.message is not '']).most_common(
-                most_common_messages_size)
+            if self.stop_words:
+                most_common_messages_per_participant[participant] = Counter(
+                    [message.message for message in self.messages
+                     if message.send_by == participant
+                     and message.message not in self.stop_words
+                     and message.message is not '']).most_common(
+                    most_common_messages_size)
+            else:
+                most_common_messages_per_participant[participant] = Counter(
+                    [message.message for message in self.messages
+                     if message.send_by == participant
+                     and message.message is not '']).most_common(
+                    most_common_messages_size)
 
         return most_common_messages_per_participant
