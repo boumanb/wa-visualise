@@ -25,6 +25,7 @@ File containing the stop words has to be a ordinary .txt file with the stop word
 Usage: wa-visualise.py [OPTIONS] CHAT_FILE
 
 Options:
+  --stop_words PATH           Use this to set the stop words file.
   --output_dir TEXT           Use this to set a certain output folder for the
                               charts. Default=output.
   --from_date TEXT            Use this to visualise from certain date.
@@ -39,9 +40,10 @@ Options:
 ## Example usage
 
 ```bash
-python wa-visualise.py exported_chat.txt stop_words.txt --most_common_size 30 --from_date 11-03-19
+python wa-visualise.py exported_chat.txt --stop_words stop_words.txt --most_common_size 30 --from_date 11-03-19
 
 Options:
+  --stop_words PATH           Use this to set the stop words file.
   --output_dir TEXT           Use this to set a certain output folder for the
                               charts. Default=output.
   --from_date TEXT            Use this to visualise from certain date.
