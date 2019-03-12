@@ -1,11 +1,10 @@
-import re
 from collections import Counter
 from datetime import datetime
+import logging
 
 from classes.message import Message
 
 MOST_COMMON_SIZE = 20
-RE_EMOJI = re.compile('[\U00010000-\U0010ffff]', flags=re.UNICODE)
 
 
 def process_chat(messages, from_date=False, keep_emojis=False):
@@ -13,16 +12,11 @@ def process_chat(messages, from_date=False, keep_emojis=False):
 
     for index, chat_line in enumerate(messages):
         try:
-            message_split = chat_line.split(',')
-            date_time_str = message_split[0] + ' ' + message_split[1].split('-')[0].strip()
-            date_time = datetime.strptime(date_time_str, "%m/%d/%y %H:%M")
-            send_by = message_split[1].split('-')[1].split(':')[0].strip()
-            if keep_emojis:
-                message = message_split[1].split('-')[1].split(':')[1].strip().lower()
-            else:
-                message = RE_EMOJI.sub(r'', message_split[1].split('-')[1].split(':')[1].strip().lower())
-        except (ValueError, IndexError):
-            pass
+            date_time = Message.extract_datetime(chat_line)
+            send_by = Message.extract_sender(chat_line)
+            message = Message.extract_message(chat_line, keep_emojis)
+        except ValueError as error:
+            logging.info(error, exc_info=True)
         else:
             if from_date and date_time > datetime.strptime(from_date, '%d-%m-%y'):
                 message = Message(chat_line, date_time, send_by, message)

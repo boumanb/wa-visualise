@@ -1,10 +1,10 @@
 import os
 import string
 import unicodedata
-
 import click as click
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
+import logging
 
 from classes.chat import Chat
 
@@ -12,6 +12,9 @@ valid_filename_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
 char_limit = 255
 
 rcParams.update({'figure.autolayout': True})
+
+logger = logging.getLogger()
+logger.setLevel(logging.ERROR)
 
 
 def load_txt_file(file_name):
@@ -57,7 +60,8 @@ def plot_save_most_common(counter_data, title, most_common_size, output_dir):
 @click.command()
 @click.argument('chat_file', type=click.Path(exists=True))
 @click.option('--stop_words', type=click.Path(exists=True), help='Use this to set the stop words file.')
-@click.option('--output_dir', help='Use this to set a certain output folder for the charts. Default=output.', default='output')
+@click.option('--output_dir', help='Use this to set a certain output folder for the charts. Default=output.',
+              default='output')
 @click.option('--from_date', help='Use this to visualise from certain date. [dd/mm/yy]')
 @click.option('--most_common_size', type=int, help='Set the output size of the most common charts. Default=50.')
 @click.option('--keep-emojis', is_flag=True, help='Setting this will keep emojis in output.')
