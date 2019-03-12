@@ -16,7 +16,7 @@ def process_chat(messages, from_date=False, keep_emojis=False):
             send_by = Message.extract_sender(chat_line)
             message = Message.extract_message(chat_line, keep_emojis)
         except ValueError as error:
-            logging.info(error, exc_info=True)
+            logging.error(error, exc_info=True)
         else:
             if from_date and date_time > datetime.strptime(from_date, '%d-%m-%y'):
                 message = Message(chat_line, date_time, send_by, message)
