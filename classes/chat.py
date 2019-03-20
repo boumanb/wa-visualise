@@ -1,8 +1,9 @@
+import re
 from collections import Counter
 from datetime import datetime
 import logging
 
-from classes.message import Message
+from classes.message import Message, extract_datetime, extract_sender, extract_message
 
 MOST_COMMON_SIZE = 20
 
@@ -11,19 +12,21 @@ def process_chat(messages, from_date=False, keep_emojis=False):
     message_list = []
 
     for index, chat_line in enumerate(messages):
-        try:
-            date_time = Message.extract_datetime(chat_line)
-            send_by = Message.extract_sender(chat_line)
-            message = Message.extract_message(chat_line, keep_emojis)
-        except ValueError as error:
-            logging.error(error, exc_info=True)
-        else:
-            if from_date and date_time > datetime.strptime(from_date, '%d-%m-%y'):
-                message = Message(chat_line, date_time, send_by, message)
-                message_list.append(message)
-            elif not from_date:
-                message = Message(chat_line, date_time, send_by, message)
-                message_list.append(message)
+        if re.search(r'(\d+/\d+/\d+)', chat_line):
+            try:
+                date_time = extract_datetime(chat_line)
+                send_by = extract_sender(chat_line)
+                message = extract_message(chat_line, keep_emojis)
+            except ValueError as error:
+                logging.error(error, exc_info=True)
+            else:
+                if from_date and date_time > datetime.strptime(from_date, '%d-%m-%y'):
+                    message = Message(chat_line, date_time, send_by, message)
+                    message_list.append(message)
+                elif not from_date:
+                    message = Message(chat_line, date_time, send_by, message)
+                    message_list.append(message)
+
     return message_list
 
 
